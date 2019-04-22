@@ -25,7 +25,8 @@ typedef enum {
     gtrsym, geqsym, lparentsym, rparentsym, commasym, semicolonsym,
     periodsym, becomessym, beginsym, endsym, ifsym, thensym,
     whilesym, dosym, callsym, constsym, varsym, procsym, writesym,
-    readsym , elsesym
+    readsym , elsesym, forsym, tosym, downtosym, returnsym,
+    selfmulsym, selfdivsym, incsym, decsym, andsym, orsym, notsym
 } token_type;
 
 //struct used to contain all tokens details

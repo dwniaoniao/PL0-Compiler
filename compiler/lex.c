@@ -13,10 +13,10 @@
 #include "data.h"
 
 //For Reserved Words
-const char* reservedWords[]={"const", "var", "procedure", "call", "begin", "end", "if", "then", "else", "while", "do", "read", "write", "odd"};
+const char* reservedWords[]={"const", "var", "procedure", "call", "begin", "end", "if", "then", "else", "while", "do", "read", "write", "odd", "for", "to", "downto", "return"};
 
 //For Reserved Special Symbols
-const char specialSymbols[]={'+', '-', '*', '/', '(', ')', '=', ',' , '.', '<', '>',  ';' , ':'};
+const char specialSymbols[]={'+', '-', '*', '/', '(', ')', '=', ',' , '.', '<', '>',  ';' , ':', '&', '|', '!'};
 
 //Lists for variables, numbers, and Lexeme
 /*int lexemeList[5000];
@@ -108,7 +108,7 @@ void lex(void){
             //Compares the variable name to see if it is one of the reserved words
             int reservedSwitch=-1;
 
-            for(i=0; i<14;i++){
+            for(i=0; i<18;i++){
                 if(strcmp(characterString, reservedWords[i])==0){
                     reservedSwitch=i;
                 }
@@ -173,6 +173,26 @@ void lex(void){
                     lexList[lexListIndex].tokenID = oddsym;
                     break;
 
+                //Case for for 
+                case 14:
+                    lexList[lexListIndex].tokenID = forsym;
+                    break;
+
+                //Case for to
+                case 15:
+                    lexList[lexListIndex].tokenID = tosym;
+                    break;
+
+                //Case for downto
+                case 16:
+                    lexList[lexListIndex].tokenID = downtosym;
+                    break;
+
+                //Case for return
+                case 17:
+                    lexList[lexListIndex].tokenID = returnsym;
+                    break;
+
                 default:
                     lexList[lexListIndex].tokenID = identsym;
                     strcpy(lexList[lexListIndex].name,characterString);
@@ -230,26 +250,53 @@ void lex(void){
         else {
             lookAhead=0;
             int spec=-1;
-            for(i=0;i<13;i++){
+            for(i=0;i<16;i++){
                 if(c==specialSymbols[i]){
                     spec=i;
                 }
             }
             //If it is a special symbol, print out the correct tokentype
             switch(spec){
-                //Case for +
+                //Case for ++
                 case 0:
-                    lexList[lexListIndex].tokenID = plussym;
+                    c = fgetc(ifp);
+                    lookAhead = 1;
+                    if(c=='+'){
+                        lexList[lexListIndex].tokenID = incsym;
+                        lookAhead = 0;
+                    }
+                    //Case for +
+                    else{
+                        lexList[lexListIndex].tokenID = plussym;
+                    }
                     lexListIndex++;
                     break;
-                //Case for -
+                //Case for --
                 case 1:
-                    lexList[lexListIndex].tokenID = minussym;
+                    c = fgetc(ifp);
+                    lookAhead = 1;
+                    if(c=='-'){
+                        lexList[lexListIndex].tokenID = decsym;
+                        lookAhead = 0;
+                    }
+                    //Case for -
+                    else{
+                        lexList[lexListIndex].tokenID = minussym;
+                    }
                     lexListIndex++;
                     break;
-                //Case for *
+                //Case for *=
                 case 2:
-                    lexList[lexListIndex].tokenID = multsym;
+                    c=fgetc(ifp);
+                    lookAhead=1;
+                    if(c=='='){
+                        lexList[lexListIndex].tokenID = selfmulsym;
+                        lookAhead = 0; 
+                    }
+                    //Case for *
+                    else{
+                        lexList[lexListIndex].tokenID = multsym;
+                    }
                     lexListIndex++;
                     break;
 
@@ -273,10 +320,16 @@ void lex(void){
                             }
                         }
                     }
+                    //Case for /=
+                    else if (c == '='){
+                        lexList[lexListIndex].tokenID = selfdivsym;
+                        lookAhead=0;
+                    }
+                    //Case for /
                     else{
                         lexList[lexListIndex].tokenID = slashsym;
-                        lexListIndex++;
                     }
+                    lexListIndex++;
                     break;
                 //Case for (
                 case 4:
@@ -353,6 +406,28 @@ void lex(void){
                         //printf("Error 4: Invalid symbols.\n");
                     }
                     break;
+
+                //Case for &
+                case 13:
+                    lexList[lexListIndex].tokenID = andsym;
+                    lexListIndex++;
+                    break; 
+
+                //Case for ||
+                case 14:
+                    c = fgetc(ifp);
+                    if(c = '|'){
+                        lexList[lexListIndex].tokenID = orsym;
+                        lexListIndex++;
+                    }
+                    break;
+
+                //Case for !
+                case 15:
+                    lexList[lexListIndex].tokenID = notsym;
+                    lexListIndex++;
+                    break;
+
                     //Prints Error 4 for invalid symbols
                 default:
                     //printf("Error 4: Invalid symbols.\n");
