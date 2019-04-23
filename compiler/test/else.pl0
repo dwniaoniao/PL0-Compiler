@@ -1,0 +1,15 @@
+var a, b, c;
+begin
+read a;
+read b;
+c := 1;
+if a = b then 
+    begin
+    write c;
+    end
+else
+    begin
+    write a;
+    write b;
+    end
+end.

@@ -1,4 +1,4 @@
 compiler/*.txt
 p
-*.pl0
+compiler/*.pl0
 report/*
