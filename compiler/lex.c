@@ -16,7 +16,7 @@
 const char* reservedWords[]={"const", "var", "procedure", "call", "begin", "end", "if", "then", "else", "while", "do", "read", "write", "odd", "for", "to", "downto", "return"};
 
 //For Reserved Special Symbols
-const char specialSymbols[]={'+', '-', '*', '/', '(', ')', '=', ',' , '.', '<', '>',  ';' , ':', '&', '|', '!'};
+const char specialSymbols[]={'+', '-', '*', '/', '(', ')', '=', ',' , '.', '<', '>',  ';' , ':', '&', '|', '!', '#'};
 
 //Lists for variables, numbers, and Lexeme
 /*int lexemeList[5000];
@@ -250,7 +250,7 @@ void lex(void){
         else {
             lookAhead=0;
             int spec=-1;
-            for(i=0;i<16;i++){
+            for(i=0;i<17;i++){
                 if(c==specialSymbols[i]){
                     spec=i;
                 }
@@ -427,8 +427,14 @@ void lex(void){
                     lexList[lexListIndex].tokenID = notsym;
                     lexListIndex++;
                     break;
+                
+                //Case for #
+                case 16:
+                    lexList[lexListIndex].tokenID = neqsym;
+                    lexListIndex++;
+                    break;
 
-                    //Prints Error 4 for invalid symbols
+                //Prints Error 4 for invalid symbols
                 default:
                     //printf("Error 4: Invalid symbols.\n");
                     break;
