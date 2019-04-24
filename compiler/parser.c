@@ -402,19 +402,19 @@ void statement(int lev, int *ptx, FILE* ifp, instruction* code, symbol* table) {
                     cx1 = cx;
                     expression(lev, ptx, ifp, code, table);
                     emit(3, lev-table[i].level, table[i].addr, code); //LOD
-                    emit(2, 0, 11, code); //LEQ
+                    emit(2, 0, 10, code); //LSS
                     cx2 = cx;
                     emit(8, 0, 0, code); //JPC
                     cx3 = cx;
                     emit(7, 0, 0, code); //JMP
                     code[cx2].m = cx; 
                     if (token == dosym){
+                        token = getNextToken(ifp);
+                        statement(lev, ptx, ifp, code, table); 
                         emit(1, 0, 2, code); //LIT
                         emit(3, lev-table[i].level, table[i].addr, code); //LOD
                         emit(2, 0, 2, code); //ADD
                         emit(4, lev-table[i].level, table[i].addr, code); //STO
-                        token = getNextToken(ifp);
-                        statement(lev, ptx, ifp, code, table);
                         emit(7, 0, cx1, code); //JMP
                         code[cx3].m = cx;
                     }
@@ -427,19 +427,19 @@ void statement(int lev, int *ptx, FILE* ifp, instruction* code, symbol* table) {
                     cx1 = cx;
                     expression(lev, ptx, ifp, code, table);
                     emit(3, lev-table[i].level, table[i].addr, code); //LOD
-                    emit(2, 0, 13, code); //GEQ
+                    emit(2, 0, 12, code); //GTR
                     cx2 = cx;
                     emit(8,0,0,code); //JPC
                     cx3 = cx;
                     emit(7,0,0,code); //JMP
                     code[cx2].m = cx;
                     if (token == dosym){
+                        token = getNextToken(ifp);
+                        statement(lev, ptx, ifp, code, table);
                         emit(3, lev-table[i].level, table[i].addr, code); //LOD
                         emit(1, 0, 2, code); //LIT
                         emit(2, 0, 3, code); //SUB
                         emit(4, lev-table[i].level, table[i].addr, code); //STO
-                        token = getNextToken(ifp);
-                        statement(lev, ptx, ifp, code, table);
                         emit(7, 0, cx1, code); //JMP
                         code[cx3].m = cx;
                     }
