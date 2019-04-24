@@ -205,6 +205,7 @@ void vardeclaration(int lev, int *ptx, int *pdx, FILE* ifp, symbol* table) {
 void statement(int lev, int *ptx, FILE* ifp, instruction* code, symbol* table) {
     
     int i, cx1, cx2;
+    int assigmentType; //0 for ':=', 1 for '*=', 2 for '/='
 
     if (token==identsym){
         i=position(id,ptx, table, lev);
@@ -218,13 +219,33 @@ void statement(int lev, int *ptx, FILE* ifp, instruction* code, symbol* table) {
         token = getNextToken(ifp);
         if (token==becomessym) {
             token = getNextToken(ifp);
+            assigmentType = 0;
+        }
+        else if (token==selfmulsym){
+            token = getNextToken(ifp);
+            assigmentType = 1;
+        }
+        else if (token==selfdivsym){
+            token = getNextToken(ifp);
+            assigmentType = 2;
         }
         else {
             error(13); //Assignment operator expected.
         }
         expression(lev, ptx, ifp, code, table);
-        if (i!=0) {
+        if (i!=0 && assigmentType==0) {
             emit(4, lev-table[i].level, table[i].addr, code); // 4 is STO for op, lev-table[i].level is for L, table[i].adr for M
+        }
+        else if (i!=0 && assigmentType==1){
+            emit(3, lev-table[i].level, table[i].addr, code); // LOD
+            emit(2, 0, 4, code); // MUL
+            emit(4, lev-table[i].level, table[i].addr, code); // STO
+        }
+        else if (i!=0 && assigmentType==2){
+            emit(3, lev-table[i].level, table[i].addr, code); //LOD
+            emit(11, 0, 0, code); //SWAP
+            emit(2, 0, 5, code); // DIV
+            emit(4,lev-table[i].level, table[i].addr, code); // STO
         }
     }
     else if (token==callsym) {

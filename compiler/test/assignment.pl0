@@ -1,0 +1,9 @@
+var a, b;
+begin
+    read a;
+    read b;
+    a *= 2;
+    b /= 2; 
+    write a;
+    write b;
+end.

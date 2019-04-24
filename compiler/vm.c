@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include "data.h"
 
-const char *opcodes[] = {"ILLEGAL", "lit", "opr", "lod", "sto", "cal", "inc", "jmp", "jpc", "sio", "sio"};
+const char *opcodes[] = {"ILLEGAL", "lit", "opr", "lod", "sto", "cal", "inc", "jmp", "jpc", "sio", "sio", "swap"};
 
 void printStackFrame(int* stack, int SP, int BP, FILE* ofp);
 void executeCycle(instruction* irStruct, int* stack, int* sp, int* bp, int* pc);
@@ -149,7 +149,7 @@ void printStackFrame(int* stack, int SP, int BP, FILE* ofp) {
 //for each instruction in ISA, implemented in a switch.
 //OPR is another function because it was better looking.
 void executeCycle(instruction* irStruct, int* stack, int* sp, int* bp, int* pc) {
-
+    int temp;
     switch(irStruct->op) {
         case 1: //LIT
             *sp=*sp+1;
@@ -193,6 +193,11 @@ void executeCycle(instruction* irStruct, int* stack, int* sp, int* bp, int* pc) 
         case 10: //SIO2
             *sp=*sp+1;
             scanf("%d", &stack[*sp]);
+            break;
+        case 11: //SWAP
+            temp = stack[*sp];
+            stack[*sp] = stack[*sp-1];
+            stack[*sp-1] = temp;
             break;
         default:
             printf("Illegal OPR!\n");
