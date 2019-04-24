@@ -204,7 +204,7 @@ void vardeclaration(int lev, int *ptx, int *pdx, FILE* ifp, symbol* table) {
 
 void statement(int lev, int *ptx, FILE* ifp, instruction* code, symbol* table) {
     
-    int i, cx1, cx2;
+    int i, cx1, cx2, cx3;
     int assigmentType; //0 for ':=', 1 for '*=', 2 for '/='
 
     if (token==identsym){
@@ -372,6 +372,84 @@ void statement(int lev, int *ptx, FILE* ifp, instruction* code, symbol* table) {
          token = getNextToken(ifp);
     }
 
+    //for <var> := <expression> to <expression> do <statement>
+    else if(token == forsym){
+        token = getNextToken(ifp);
+        if (token != identsym){
+            error(27); //for must be followed by an identifier
+        }
+        else{
+            i = position(id, ptx, table, lev);
+            if (i==0){
+                error(11); //Undeclared identifier
+            }
+            else if (table[i].kind!=2){
+                error(12); //Assignment not allowed
+                i = 0;
+            }
+            token = getNextToken(ifp);
+            if (token != becomessym){
+                error(13); //Assignment operator expected
+            }
+            else{
+                token = getNextToken(ifp);
+            }
+            expression(lev, ptx, ifp, code, table);
+            if (i != 0){
+                emit(4, lev-table[i].level, table[i].addr, code); //STO
+                if (token == tosym){
+                    token = getNextToken(ifp);
+                    cx1 = cx;
+                    expression(lev, ptx, ifp, code, table);
+                    emit(3, lev-table[i].level, table[i].addr, code); //LOD
+                    emit(2, 0, 11, code); //LEQ
+                    cx2 = cx;
+                    emit(8, 0, 0, code); //JPC
+                    cx3 = cx;
+                    emit(7, 0, 0, code); //JMP
+                    code[cx2].m = cx; 
+                    if (token == dosym){
+                        emit(1, 0, 2, code); //LIT
+                        emit(3, lev-table[i].level, table[i].addr, code); //LOD
+                        emit(2, 0, 2, code); //ADD
+                        emit(4, lev-table[i].level, table[i].addr, code); //STO
+                        token = getNextToken(ifp);
+                        statement(lev, ptx, ifp, code, table);
+                        emit(7, 0, cx1, code); //JMP
+                        code[cx3].m = cx;
+                    }
+                    else {
+                        error(18); //do expected
+                    }
+                }
+                else if (token == downtosym){
+                    token = getNextToken(ifp);
+                    cx1 = cx;
+                    expression(lev, ptx, ifp, code, table);
+                    emit(3, lev-table[i].level, table[i].addr, code); //LOD
+                    emit(2, 0, 13, code); //GEQ
+                    cx2 = cx;
+                    emit(8,0,0,code); //JPC
+                    cx3 = cx;
+                    emit(7,0,0,code); //JMP
+                    code[cx2].m = cx;
+                    if (token == dosym){
+                        emit(3, lev-table[i].level, table[i].addr, code); //LOD
+                        emit(1, 0, 2, code); //LIT
+                        emit(2, 0, 3, code); //SUB
+                        emit(4, lev-table[i].level, table[i].addr, code); //STO
+                        token = getNextToken(ifp);
+                        statement(lev, ptx, ifp, code, table);
+                        emit(7, 0, cx1, code); //JMP
+                        code[cx3].m = cx;
+                    }
+                }
+                else {
+                    error(28); //to or downto expected
+                }
+            }
+        }
+    }
 }
 
 void condition(int lev, int *ptx, FILE* ifp, instruction* code, symbol* table) {
@@ -661,6 +739,14 @@ void error(int errorCase) {
         case 26:
             printf("Error: 26 ");
             printf("Level is larger than the maximum allowed lexicographical levels!\n");
+            break;
+        case 27:
+            printf("Error: 27 ");
+            printf("For must be followed by an identifier.\n");
+            break;
+        case 28:
+            printf("Error: 28 ");
+            printf("To or downto expected.\n");
             break;
         default:
             break;
