@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include "data.h"
 
-const char *opcodes[] = {"ILLEGAL", "lit", "opr", "lod", "sto", "cal", "inc", "jmp", "jpc", "sio", "sio", "swap"};
+const char *opcodes[] = {"ILLEGAL", "lit", "opr", "lod", "sto", "cal", "inc", "jmp", "jpc", "sio", "sio", "swap", "gch"};
 
 void printStackFrame(int* stack, int SP, int BP, FILE* ofp);
 void executeCycle(instruction* irStruct, int* stack, int* sp, int* bp, int* pc);
@@ -199,6 +199,12 @@ void executeCycle(instruction* irStruct, int* stack, int* sp, int* bp, int* pc) 
             stack[*sp] = stack[*sp-1];
             stack[*sp-1] = temp;
             break;
+
+        case 12: //GCH
+            printf("%c\n", stack[*sp]);
+            *sp = *sp - 1;
+            break;
+
         default:
             printf("Illegal OPR!\n");
     }

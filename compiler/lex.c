@@ -13,7 +13,7 @@
 #include "data.h"
 
 //For Reserved Words
-const char* reservedWords[]={"const", "var", "procedure", "call", "begin", "end", "if", "then", "else", "while", "do", "read", "write", "odd", "for", "to", "downto", "return"};
+const char* reservedWords[]={"const", "var", "procedure", "call", "begin", "end", "if", "then", "else", "while", "do", "read", "write", "odd", "for", "to", "downto", "return", "getch"};
 
 //For Reserved Special Symbols
 const char specialSymbols[]={'+', '-', '*', '/', '(', ')', '=', ',' , '.', '<', '>',  ';' , ':', '&', '|', '!', '#'};
@@ -108,7 +108,7 @@ void lex(void){
             //Compares the variable name to see if it is one of the reserved words
             int reservedSwitch=-1;
 
-            for(i=0; i<18;i++){
+            for(i=0; i<19;i++){
                 if(strcmp(characterString, reservedWords[i])==0){
                     reservedSwitch=i;
                 }
@@ -192,7 +192,12 @@ void lex(void){
                 case 17:
                     lexList[lexListIndex].tokenID = returnsym;
                     break;
-
+                
+                //Case for getch
+                case 18:
+                    lexList[lexListIndex].tokenID = getchsym;
+                    break;
+                    
                 default:
                     lexList[lexListIndex].tokenID = identsym;
                     strcpy(lexList[lexListIndex].name,characterString);

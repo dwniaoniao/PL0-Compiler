@@ -450,6 +450,12 @@ void statement(int lev, int *ptx, FILE* ifp, instruction* code, symbol* table) {
             }
         }
     }
+    //getch <expression>
+    else if (token == getchsym){
+        token = getNextToken(ifp);
+        expression(lev, ptx, ifp, code, table);
+        emit(12, 0, 0, code); //GCH, write the top stack element as a character to the screen
+    }
 }
 
 void condition(int lev, int *ptx, FILE* ifp, instruction* code, symbol* table) {

@@ -1,0 +1,9 @@
+var a, b;
+begin
+    a := 65;
+    b := 97;
+    getch a;
+    getch b;
+    getch 65;
+    getch 97;
+end.
