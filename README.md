@@ -28,6 +28,13 @@
 1. 增加一维数组类型（可增加指令）。
 1. 其他典型语言设施
 
+## 已完成的部分
+
+1. 课内实验的要求；
+1. 课程设计的基本内容；
+1. 增加字符类型；
+1. 增加行内注释。
+
 ## Introduction
 
 This project simulates a full compiler for the PL/0 programming language, written entirely in C.
