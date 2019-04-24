@@ -1,0 +1,5 @@
+var a;
+begin
+    a := 1; /*this is a line comment*/
+    write a; //this is a line comment
+end.

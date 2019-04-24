@@ -305,7 +305,7 @@ void lex(void){
                     lexListIndex++;
                     break;
 
-                //Case for comments
+                //Case for comments 
                 case 3:
                     c=fgetc(ifp);
                     lookAhead=1;
@@ -325,6 +325,19 @@ void lex(void){
                             }
                         }
                     }
+                    else if (c == '/'){
+                        comments = 1;
+                        lookAhead = 0;
+                        c = fgetc(ifp);
+                        while(comments == 1){
+                            if(c == '\n'){
+                                comments = 0;
+                            }
+                            else{
+                                c = fgetc(ifp);
+                            }
+                        }
+                    }
                     //Case for /=
                     else if (c == '='){
                         lexList[lexListIndex].tokenID = selfdivsym;
@@ -333,8 +346,8 @@ void lex(void){
                     //Case for /
                     else{
                         lexList[lexListIndex].tokenID = slashsym;
+                        lexListIndex++;
                     }
-                    lexListIndex++;
                     break;
                 //Case for (
                 case 4:
